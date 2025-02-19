@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>政策文件中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- 容器 -->
+    <div id="policy-container" class="mx-auto py-3"></div>
+    
+    <!-- 模板 -->
+    <template id="category-template">
+        <div class="category-section ">
+            <div class="section-header"></div>
+            <div class="document-grid"></div>
+        </div>
+    </template>
+
+    <template id="document-template">
+        <div class="document-card grid grid-cols-4 gap-6 py-5 divide-y divide-gray-100 shadow hover:shadow-lg">
+            <div class="doc-header pl-3 col-span-2 mt-1 truncate text-s leading-5 text-gray-700 hover:animate-pulse">
+            </div>
+            <div
+                class="doc-date flex justify-center mt-1 truncate text-xs leading-5 text-gray-500 border-none hover:animate-pulse">
+            </div>
+            <div class="border-none">
+                <div class="flex justify-center">
+                    <button
+                        class="view-button cursor-pointer rounded-full border border-lime-700 px-4 py-1 text-sm font-semibold text-lime-700 hover:animate-pulse hover:border-transparent hover:bg-lime-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-lime-700 focus:ring-offset-2">查看</button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 配置文件 -->
+    <script type="module">
+    </script>
+
+    <!-- 主逻辑 -->
+    <script type="module">
+        // config.js
+        // config.js
+        const CONFIG = {
+            CATEGORIES: [
+                {
+                    id: "product-price",
+                    title: "PRICE",
+                    documents: [
+                        {
+                            title: "Price Policy",
+                            date: "2024-04-16",
+                            url: "https://www.baidu.com"
+                        },
+                    ]
+                },
+            ]
+        };
+
+        class PolicyRenderer {
+            constructor(containerId) {
+                this.container = document.getElementById(containerId);
+                this.init();
+            }
+
+            init() {
+                this.renderHeader();
+                CONFIG.CATEGORIES.forEach(category => {
+                    this.renderCategory(category);
+                });
+            }
+
+            renderHeader() {
+                const header = document.createElement('header');
+                header.className = 'bg-white shadow gap-2';
+                header.innerHTML = `
+                    <div class="mx-auto py-3">
+                        <h1 class="flex justify-center text-2xl font-bold tracking-tight text-gray-900">政策文件中心</h1>
+                    </div>
+                `;
+                this.container.prepend(header);
+            }
+
+            renderCategory(category) {
+                const template = document.getElementById('category-template').content.cloneNode(true);
+
+                // 分类标题
+                const headerDiv = template.querySelector('.section-header');
+                headerDiv.className = 'flex w-full bg-white shadow-sm mt-3 mb-3 border-b-2 border-b-slate-200';
+                headerDiv.innerHTML = `
+                    <div class="flex ml-3 text-md font-bold tracking-tight text-gray-900">${category.title}</div>
+                `;
+
+                // 文档网格
+                const gridDiv = template.querySelector('.document-grid');
+                gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-2';
+
+                category.documents.forEach(doc => {
+                    const card = this.createDocumentCard(doc);
+                    gridDiv.appendChild(card);
+                });
+
+                this.container.appendChild(template);
+            }
+
+            createDocumentCard(docData) {
+                const template = document.getElementById('document-template').content.cloneNode(true);
+                const card = template.querySelector('.document-card');
+
+                // 卡片样式
+                card.className = 'w-full grid grid-cols-4 gap-6 py-5 divide-y divide-gray-100 shadow hover:shadow-lg transition-all';
+
+                // 标题部分
+                const titleDiv = card.querySelector('.doc-header');
+                titleDiv.className = 'pl-3 col-span-2 mt-1 truncate text-s leading-5 text-gray-700 hover:animate-pulse';
+                titleDiv.innerHTML = docData.policyId ? `
+                                <div class="text-xs mb-1 text-slate-500">政策编号: ${docData.policyId}</div>
+                                <div>${docData.title}</div>
+                            ` : docData.title;
+
+                // 日期部分
+                const dateDiv = card.querySelector('.doc-date');
+                dateDiv.textContent = docData.date;
+
+                // 按钮部分
+                const button = card.querySelector('.view-button');
+                button.addEventListener('click', () => window.open(docData.url, '_blank'));
+
+                return card;
+            }
+        }
+
+        // 初始化
+        new PolicyRenderer('policy-container');
+    </script>
+
+    <!-- 全局样式增强 -->
+    <style>
+        .doc-button {
+            @apply cursor-pointer rounded-full border border-lime-700 px-4 py-1 text-sm font-semibold text-lime-700 hover:animate-pulse hover:border-transparent hover:bg-lime-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-lime-700 focus:ring-offset-2;
+        }
+
+        .document-card {
+            @apply bg-white transition-transform duration-300 ease-in-out hover:-translate-y-1;
+        }
+
+        @media (min-width: 768px) {
+            .document-grid {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            }
+        }
+    </style>
+</body>
+
+</html>
